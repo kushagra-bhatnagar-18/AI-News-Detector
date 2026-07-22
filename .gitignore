@@ -1,5 +1,20 @@
-venv/
+# Python
 __pycache__/
-.ipynb_checkpoints/
-.env
 *.pyc
+
+# Virtual environment
+venv/
+.env
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# Dataset
+data/
+
+# Model files
+*.safetensors
+*.bin
+
+# Streamlit
+.streamlit/
