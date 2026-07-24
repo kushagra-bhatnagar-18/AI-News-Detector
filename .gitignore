@@ -12,9 +12,8 @@ venv/
 # Dataset
 data/
 
-# Model files
-*.safetensors
-*.bin
+# Models
+models/
 
 # Streamlit
 .streamlit/

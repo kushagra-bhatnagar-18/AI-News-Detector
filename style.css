@@ -1,0 +1,154 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+html, body, [class*="css"]{
+    font-family: 'Poppins', sans-serif;
+}
+
+
+.stApp{
+    background: linear-gradient(
+        135deg,
+        #050816 0%,
+        #0f172a 40%,
+        #111827 100%
+    );
+}
+
+
+.block-container{
+    padding-top:2rem;
+    padding-bottom:2rem;
+    max-width:1200px;
+}
+
+
+h1{
+    font-size:3rem;
+    font-weight:700;
+}
+
+h2{
+    font-weight:600;
+}
+
+
+textarea{
+    border-radius:18px !important;
+    border:1px solid rgba(255,255,255,0.15) !important;
+    background:rgba(255,255,255,0.03) !important;
+}
+
+
+.stButton>button{
+
+    width:100%;
+
+    height:60px;
+
+    border-radius:16px;
+
+    font-size:20px;
+
+    font-weight:600;
+
+    color:white;
+
+    background:linear-gradient(
+        90deg,
+        #2563eb,
+        #3b82f6
+    );
+
+    border:none;
+
+    transition:0.3s;
+}
+
+.stButton>button:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:0 0 25px rgba(59,130,246,.5);
+
+    background:linear-gradient(
+        90deg,
+        #1d4ed8,
+        #2563eb
+    );
+}
+
+
+div[data-testid="metric-container"]{
+
+    background:rgba(255,255,255,.05);
+
+    border-radius:18px;
+
+    padding:20px;
+
+    border:1px solid rgba(255,255,255,.08);
+
+}
+
+
+section[data-testid="stSidebar"]{
+
+    background:#0b1120;
+
+    border-right:1px solid rgba(255,255,255,.08);
+
+}
+
+hr{
+
+    border:1px solid rgba(255,255,255,.08);
+
+}
+
+.verdict-card{
+
+    border-radius:22px;
+    padding:30px;
+    margin-top:20px;
+    margin-bottom:20px;
+    background:rgba(255,255,255,.05);
+    backdrop-filter:blur(18px);
+    border:1px solid rgba(255,255,255,.08);
+    box-shadow:0 8px 30px rgba(0,0,0,.25);
+
+}
+
+.verdict-title{
+
+    font-size:34px;
+    font-weight:700;
+    margin-bottom:10px;
+
+}
+
+.verdict-confidence{
+
+    font-size:52px;
+    font-weight:700;
+    color:#60A5FA;
+
+}
+
+.real{
+
+    color:#22C55E;
+
+}
+
+.fake{
+
+    color:#EF4444;
+
+}
+
+.verdict-small{
+
+    color:#B8C1CC;
+    font-size:18px;
+
+}

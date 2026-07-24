@@ -1,62 +1,48 @@
 # 📰 AI-Powered Fake News Detection System
 
-An NLP-based Fake News Detection system that classifies news articles as **Real** or **Fake** using Machine Learning and Transformer-based Deep Learning models.
+An AI-powered Fake News Detection web application built using **DistilBERT**, **PyTorch**, and **Streamlit**.
 
-This project explores traditional Natural Language Processing approaches and modern Transformer architectures by comparing a baseline Machine Learning model with a fine-tuned DistilBERT model.
-
----
-
-# 🚀 Features
-
-- Exploratory Data Analysis of news datasets
-- Text preprocessing and cleaning
-- Baseline Fake News Classification using:
-  - TF-IDF Vectorization
-  - Logistic Regression
-- Transformer-based Fake News Classification using:
-  - DistilBERT
-  - Hugging Face Transformers
-  - PyTorch
-- Model evaluation using:
-  - Accuracy
-  - Precision
-  - Recall
-  - F1-score
-  - Confusion Matrix
-- Interactive prediction interface using Streamlit
+The model classifies whether a news article resembles **Real** or **Fake** news based on linguistic patterns learned from a dataset of over **31,000 news articles**.
 
 ---
 
-# 🏗️ Project Workflow
+## 🚀 Features
 
-```
-News Dataset
-        |
-        ↓
-Exploratory Data Analysis
-        |
-        ↓
-Text Preprocessing
-        |
-        ↓
-Baseline Machine Learning Model
-(TF-IDF + Logistic Regression)
-        |
-        ↓
-Transformer Model
-(Fine-tuned DistilBERT)
-        |
-        ↓
-Streamlit Web Application
-```
+- 🤖 Fine-tuned DistilBERT Transformer
+- 📰 Fake vs Real News Classification
+- 📊 Confidence Score
+- 📈 Interactive Probability Visualization
+- 📋 Word, Character & Reading Time Statistics
+- 🎨 Modern Dark-Themed UI
+- 📜 Prediction History
+- ⚡ Fast Inference using PyTorch
 
 ---
 
-# 📂 Project Structure
+## 🛠 Tech Stack
 
-```
+- Python
+- Streamlit
+- DistilBERT
+- Hugging Face Transformers
+- PyTorch
+- Pandas
+- NumPy
+- Plotly
+- HTML
+- CSS
+
+---
+
+## 📂 Project Structure
+
+```text
 AI_News_Detector/
-
+│
+├── app.py
+├── style.css
+├── requirements.txt
+├── README.md
 │
 ├── notebooks/
 │   ├── EDA.ipynb
@@ -65,134 +51,40 @@ AI_News_Detector/
 │
 ├── models/
 │
-├── results/
-│
-├── app.py
-│
-├── requirements.txt
-│
-├── README.md
-│
-└── .gitignore
+└── data/
 ```
 
 ---
 
-# 🧠 Models Used
+## 🤖 Model Details
 
-## 1. Baseline Model
-
-### TF-IDF + Logistic Regression
-
-The baseline model converts news text into numerical representations using TF-IDF and performs binary classification using Logistic Regression.
-
-### Purpose:
-- Establish a traditional Machine Learning benchmark
-- Compare performance with Transformer-based models
+| Attribute | Value |
+|----------|-------|
+| Model | DistilBERT |
+| Framework | PyTorch |
+| Task | Binary Text Classification |
+| Dataset Size | 31,428 Articles |
 
 ---
 
-## 2. Transformer Model
+## ⚠ Disclaimer
 
-### DistilBERT
+This application predicts whether a news article resembles **Real** or **Fake** news based on language patterns learned during training.
 
-A fine-tuned DistilBERT model from Hugging Face is used for Fake News Classification.
-
-### Advantages:
-- Understands contextual meaning of words
-- Captures complex language patterns
-- Provides better text representation compared to traditional NLP techniques
+It **does not perform live fact-checking** and should not be considered a source of truth.
 
 ---
 
-# 📊 Model Evaluation
+## 🔮 Future Improvements
 
-The models are evaluated using:
-
-- Accuracy
-- Precision
-- Recall
-- F1-score
-- Confusion Matrix
+- Google Fact Check API
+- GNews API
+- Live Fact Verification
+- Source Credibility Analysis
+- Streamlit Cloud Deployment
 
 ---
 
-# 🛠️ Tech Stack
-
-## Programming Language
-
-- Python
-
-## Data Processing
-
-- Pandas
-- NumPy
-
-## Machine Learning
-
-- Scikit-learn
-
-## Deep Learning / NLP
-
-- PyTorch
-- Hugging Face Transformers
-- Hugging Face Datasets
-
-## Deployment
-
-- Streamlit
-
----
-
-# ⚙️ Installation
-
-Clone the repository:
-
-```bash
-git clone <repository-url>
-```
-
-Navigate to the project directory:
-
-```bash
-cd AI_News_Detector
-```
-
-Install dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
----
-
-# ▶️ Running the Application
-
-Start the Streamlit application:
-
-```bash
-streamlit run app.py
-```
-
-Enter a news article and get the prediction:
-
-```
-Real News / Fake News
-```
-
----
-
-# 📌 Future Improvements
-
-- Real-time fact verification using external APIs
-- News source credibility analysis
-- Explainable AI using SHAP/LIME
-- Multilingual fake news detection
-- Improved deployment pipeline
-- Evidence-based claim verification
-
----
-
-# 👨‍💻 Author
+## 👨‍💻 Author
 
 **Kushagra Bhatnagar**
