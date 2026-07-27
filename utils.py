@@ -1,16 +1,23 @@
 import requests
-from dotenv import load_dotenv
 from sentence_transformers import SentenceTransformer
 from sentence_transformers.util import cos_sim
 import spacy
+import streamlit as st
+import os
+from dotenv import load_dotenv()
 
 nlp = spacy.load("en_core_web_sm")
 semantic_model = SentenceTransformer(
     "all-MiniLM-L6-v2"
 )
 
-GNEWS_API_KEY = st.secrets["GNEWS_API_KEY"]
-GOOGLE_FACTCHECK_API_KEY = st.secrets["GOOGLE_FACTCHECK_API_KEY"]
+try:
+    GNEWS_API_KEY = st.secrets["GNEWS_API_KEY"]
+    GOOGLE_FACTCHECK_API_KEY = st.secrets["GOOGLE_FACTCHECK_API_KEY"]
+except Exception:
+    load_dotenv()
+    GNEWS_API_KEY = os.getenv("GNEWS_API_KEY")
+    GOOGLE_FACTCHECK_API_KEY = os.getenv("GOOGLE_FACTCHECK_API_KEY")
 
 def extract_claim(article):
 
