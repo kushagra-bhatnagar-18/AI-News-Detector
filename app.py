@@ -250,7 +250,7 @@ with b2:
         "🗑️",
         use_container_width=True,
         on_click = clear_news
-    ):
+    )
         
 if predict:
     if news.strip() == "":
