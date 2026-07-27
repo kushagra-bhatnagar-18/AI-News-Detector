@@ -246,13 +246,12 @@ def clear_news():
     st.session_state.news_input = ""
 
 with b2:
-    if st.button(
+    st.button(
         "🗑️",
         use_container_width=True,
         on_click = clear_news
     ):
-        st.session_state.news_input = ""
-        st.rerun()
+        
 if predict:
     if news.strip() == "":
         st.warning("Please enter a news article.")
