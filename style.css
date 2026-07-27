@@ -31,28 +31,26 @@ h2{
     font-weight:600;
 }
 
-
 textarea{
-    border-radius:18px !important;
-    border:1px solid rgba(255,255,255,0.15) !important;
-    background:rgba(255,255,255,0.03) !important;
-}
 
+    color:white !important;
+    font-size:17px !important;
+    padding:16px !important;
+    border-radius:18px !important;
+    border:1px solid rgba(255,255,255,.12) !important;
+    background:rgba(255,255,255,.03) !important;
+    backdrop-filter:blur(18px);
+
+}
 
 .stButton>button{
 
     width:100%;
-
     height:60px;
-
     border-radius:16px;
-
     font-size:20px;
-
     font-weight:600;
-
     color:white;
-
     background:linear-gradient(
         90deg,
         #2563eb,
@@ -61,94 +59,215 @@ textarea{
 
     border:none;
 
-    transition:0.3s;
+    transition:
+    transform .25s ease,
+    box-shadow .25s ease,
+    background .25s ease;;
 }
 
 .stButton>button:hover{
 
-    transform:translateY(-3px);
+    transform:
+        translateY(-4px)
+        scale(1.02);
 
-    box-shadow:0 0 25px rgba(59,130,246,.5);
+    box-shadow:
+        0 0 30px rgba(59,130,246,.45);
 
-    background:linear-gradient(
-        90deg,
-        #1d4ed8,
-        #2563eb
-    );
 }
 
 
 div[data-testid="metric-container"]{
 
     background:rgba(255,255,255,.05);
+    backdrop-filter:blur(18px);
+    border-radius:18px;
+    padding:20px;
+    border:1px solid rgba(255,255,255,.08);
+    box-shadow:0 6px 18px rgba(0,0,0,.25);
+    transition:.3s;
+
+}
+
+div[data-testid="metric-container"]:hover{
+
+    transform:translateY(-4px);
+    border:1px solid rgba(59,130,246,.35);
+    box-shadow:0 10px 28px rgba(59,130,246,.25);
+
+}   
+
+div[data-testid="stVerticalBlock"]>div{
 
     border-radius:18px;
-
-    padding:20px;
-
-    border:1px solid rgba(255,255,255,.08);
 
 }
 
 
 section[data-testid="stSidebar"]{
 
-    background:#0b1120;
+    background:linear-gradient(
+    180deg,
+    #07111F,
+    #0E1B30
+    );
 
     border-right:1px solid rgba(255,255,255,.08);
 
 }
 
-hr{
+section[data-testid="stSidebar"] div[data-testid="metric-container"]{
 
-    border:1px solid rgba(255,255,255,.08);
+    background:rgba(255,255,255,.03);
 
 }
 
-.verdict-card{
+hr{
 
-    border-radius:22px;
-    padding:30px;
-    margin-top:20px;
-    margin-bottom:20px;
+    border:none;
+    height:1px;
+    background:linear-gradient(
+        90deg,
+        transparent,
+        rgba(59,130,246,.5),
+        transparent
+    );
+
+}
+
+
+.glass-card{
+
     background:rgba(255,255,255,.05);
     backdrop-filter:blur(18px);
     border:1px solid rgba(255,255,255,.08);
-    box-shadow:0 8px 30px rgba(0,0,0,.25);
+    border-radius:22px;
+    padding:25px;
+    margin-top:18px;
+    margin-bottom:18px;
+    box-shadow:0 8px 25px rgba(0,0,0,.35);
+    transition:.35s;
+
+}
+.glass-card:hover{
+
+    transform:translateY(-6px);
+    border:1px solid rgba(96,165,250,.4);
+    box-shadow:
+        0 12px 35px rgba(59,130,246,.25),
+        0 0 18px rgba(59,130,246,.15);
+
+}
+@keyframes fadeIn{
+
+    from{
+        opacity:0;
+        transform:translateY(25px);
+
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+
+    }
 
 }
 
-.verdict-title{
+.fade{
 
-    font-size:34px;
-    font-weight:700;
-    margin-bottom:10px;
+    animation:fadeIn .6s ease;
 
 }
 
-.verdict-confidence{
+*{
 
-    font-size:52px;
-    font-weight:700;
-    color:#60A5FA;
+    transition:.25s ease;
 
 }
 
-.real{
-
-    color:#22C55E;
-
-}
-
-.fake{
-
-    color:#EF4444;
+::-webkit-scrollbar{
+    width:10px;
 
 }
 
-.verdict-small{
+::-webkit-scrollbar-track{
+    background:#08111F;
 
-    color:#B8C1CC;
-    font-size:18px;
+}
+
+::-webkit-scrollbar-thumb{
+    background:#2563EB;
+    border-radius:20px;
+
+}
+
+::-webkit-scrollbar-thumb:hover{
+    background:#60A5FA;
+
+}
+
+h1{
+
+    text-shadow:
+        0 0 18px rgba(59,130,246,.35);
+
+}
+
+img{
+
+    border-radius:16px;
+    transition:.3s;
+
+}
+
+img:hover{
+
+    transform:scale(1.02);
+
+}
+
+.stProgress>div>div{
+
+    border-radius:20px;
+
+}
+
+details{
+
+    background:rgba(255,255,255,.04);
+    border-radius:18px;
+    border:1px solid rgba(255,255,255,.08);
+    padding:10px;
+
+}
+
+input{
+
+    border-radius:14px !important;
+
+}
+
+.block-container{
+
+    animation:fadeIn .6s ease;
+
+}
+
+[data-testid="stCaption"]{
+
+    color:#AEB7C2 !important;
+
+}
+
+div[data-baseweb="notification"]{
+
+    border-radius:18px;
+
+}
+
+.stMarkdown{
+
+    margin-bottom:8px;
 
 }

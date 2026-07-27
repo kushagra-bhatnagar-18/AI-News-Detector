@@ -1,19 +1,28 @@
-# Python
+# Virtual Environment
+venv/
+
+# Environment variables
+.env
+
+# Python cache
 __pycache__/
 *.pyc
 
-# Virtual environment
-venv/
-.env
-
-# Jupyter checkpoints
+# Jupyter
 .ipynb_checkpoints/
 
-# Dataset
-data/
+# Streamlit cache
+.streamlit/
 
-# Models
+# Generated reports
+AI_Fake_News_Report.pdf
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Local trained model
 models/
 
-# Streamlit
-.streamlit/
+# Training datasets
+data/

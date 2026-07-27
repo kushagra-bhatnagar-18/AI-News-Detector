@@ -1,12 +1,48 @@
 import streamlit as st
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch
 import time
 import plotly.graph_objects as go
+from utils import (
+        get_related_news,
+        get_fact_checks,
+        extract_claim,
+        extract_keywords,
+        semantic_fact_check_match
+    )
+
+from transformers import (
+    AutoTokenizer,
+    AutoModelForSequenceClassification,
+)
+
+from utils import (
+    get_related_news,
+    get_fact_checks,
+    semantic_fact_check_match,
+)
+
+from Components import(
+    show_prediction,
+    show_dashboard,
+    show_trust_score,
+    show_fact_check,
+    show_confidence_meter,
+    show_probability_chart,
+    show_related_news,
+    show_overall_reliability,
+    show_model_information,
+    show_search_summary,
+    show_ai_reasoning,
+    show_authenticity_indicators,
+    show_recommendation,
+    show_reliability_breakdown,
+    show_authenticity_progress,
+    generate_pdf_report,
+)
 
 st.set_page_config(
-    page_title="AI Fake News Detector",
-    page_icon="📰",
+    page_title="AI-Powered Fake News Detection",
+    page_icon="🧠",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -15,7 +51,7 @@ def load_css():
     with open("style.css") as f:
         st.markdown(
             f"<style>{f.read()}</style>",
-            unsafe_allow_html=True
+            unsafe_allow_html=True,
         )
 
 load_css()
@@ -23,16 +59,17 @@ load_css()
 @st.cache_resource
 def load_model():
 
+    MODEL_NAME = "KBhatnagar/AI-Fake-News-Detector"
+
     tokenizer = AutoTokenizer.from_pretrained(
-        "models/final_model"
+        MODEL_NAME
     )
 
     model = AutoModelForSequenceClassification.from_pretrained(
-        "models/final_model"
+        MODEL_NAME
     )
 
     return tokenizer, model
-
 
 tokenizer, model = load_model()
 
@@ -49,11 +86,9 @@ with st.sidebar:
     st.markdown("---")
 
     st.subheader("📌 Model")
-
     st.write("Fine-tuned **DistilBERT**")
 
     st.subheader("📚 Dataset")
-
     st.write("""
 **Training Articles**
 
@@ -65,15 +100,19 @@ with st.sidebar:
 """)
 
     st.subheader("⚙️ Tech Stack")
-
     st.write("""
-- 🤗 Hugging Face
-- PyTorch
-- Streamlit
+• 🤗 Hugging Face
+
+• PyTorch
+
+• Streamlit
+
+• Google Fact Check API
+
+• NewsAPI
 """)
 
     st.subheader("👨‍💻 Developer")
-
     st.write("Kushagra Bhatnagar")
 
     st.markdown("---")
@@ -82,28 +121,53 @@ with st.sidebar:
 
     if st.session_state.history:
 
+        latest = st.session_state.history[-1]
+
+        st.metric(
+            "Latest Prediction",
+            latest["Prediction"]
+        )
+
+        st.metric(
+            "Confidence",
+            f"{latest['Confidence']:.2%}"
+        )
+
         st.markdown("### 🕘 Recent Predictions")
 
-        for item in st.session_state.history[-5:]:
+        for item in reversed(st.session_state.history[-5:]):
 
-            emoji = "✅" if item["Prediction"] == "Real" else "❌"
+            emoji = (
+                "✅"
+                if item["Prediction"] == "Real"
+                else "❌"
+            )
 
             st.write(
                 f"{emoji} {item['Prediction']} ({item['Confidence']:.2%})"
             )
 
+    else:
+
+        st.info("Analyze an article to start building prediction history.")
+
+    st.markdown("---")
+
+    st.caption(
+        "DistilBERT v1.0\n\nInference Device: CPU"
+    )
 st.markdown(
 """
 <h1 style="
 text-align:center;
-font-size:56px;
+font-size:58px;
 font-weight:700;
 background:linear-gradient(90deg,#4F46E5,#06B6D4);
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
 ">
 
-📰 AI-Powered Fake News Detection
+Fake News Detector
 
 </h1>
 """,
@@ -128,22 +192,17 @@ fine-tuned <b>DistilBERT Transformer</b>.
 """,
 unsafe_allow_html=True
 )
-
 st.warning(
 """
 ### ⚠ Disclaimer
 
-This application predicts whether a news article resembles
-**Real** or **Fake** news based on language patterns learned
-during training.
+This application combines AI-based text classification with real-time news and existing fact-checks from external sources.
 
-It **does not perform live fact checking**
-and should not be considered a source of truth.
+The AI prediction is based on learned language patterns and does not independently verify factual accuracy. Always consult reliable news organizations and professional fact-checkers before relying on important information.
 """
 )
 
 st.subheader("📝 News Article")
-
 st.write(
     "Paste a complete news article below and let the AI analyze it."
 )
@@ -161,38 +220,49 @@ aimed at improving transportation infrastructure across northern India.
 )
 
 news = st.session_state.news_input
-
 word_count = len(news.split())
 char_count = len(news)
 sentence_count = len(
     [s for s in news.split(".") if s.strip()]
 )
-reading_time = max(1, word_count // 200)
 
+reading_time = max(
+    1,
+    word_count // 200
+)
 m1, m2, m3, m4 = st.columns(4)
-
 m1.metric("Words", word_count)
 m2.metric("Characters", char_count)
 m3.metric("Sentences", sentence_count)
-m4.metric("Reading Time", f"{reading_time} min")
+m4.metric(
+    "Reading Time",
+    f"{reading_time} min"
+)
 
 st.divider()
 
-predict = st.button(
-    "🚀 Analyze Article",
-    use_container_width=True
-)
+b1, b2 = st.columns([5,1])
+with b1:
+    predict = st.button(
+        "🚀 Analyze Article",
+        use_container_width=True
+    )
 
+with b2:
+    if st.button(
+        "🗑️",
+        use_container_width=True
+    ):
+        st.session_state.news_input = ""
+        st.rerun()
 if predict:
-
     if news.strip() == "":
         st.warning("Please enter a news article.")
         st.stop()
 
-    start = time.time()
+    start_time = time.time()
 
     with st.spinner("🧠 Running DistilBERT inference..."):
-
         inputs = tokenizer(
             news,
             return_tensors="pt",
@@ -204,14 +274,20 @@ if predict:
         with torch.no_grad():
             outputs = model(**inputs)
 
-        probs = torch.softmax(outputs.logits, dim=1)
+        probabilities = torch.softmax(
+            outputs.logits,
+            dim=1
+        )
 
-        fake_probability = probs[0][0].item()
-        real_probability = probs[0][1].item()
+        fake_probability = probabilities[0][0].item()
+        real_probability = probabilities[0][1].item()
 
-        prediction = torch.argmax(probs, dim=1).item()
+        prediction = torch.argmax(
+            probabilities,
+            dim=1
+        ).item()
 
-    inference_time = time.time() - start
+    inference_time = time.time() - start_time
 
     confidence = (
         real_probability
@@ -224,299 +300,266 @@ if predict:
         if prediction == 1
         else "Fake"
     )
+   
+    query = extract_claim(news)
+    keywords = extract_keywords(news)
+    
+    queries = [
+
+    query,
+    keywords,
+
+    " ".join(query.split()[:8]),
+    " ".join(query.split()[:5])
+
+    ]
+    queries = list(set([q.strip() for q in queries if q.strip()]))
+
+    fact_checks = []
+    related_news = []
+    for q in queries:
+
+        if not q.strip():
+            continue
+
+        fc = get_fact_checks(q)
+        rn = get_related_news(q)
+
+        if fc:
+            fact_checks.extend(fc)
+        if rn:
+            related_news.extend(rn)
+
+    seen_claims = set()
+    unique_fact_checks = []
+    for fc in fact_checks:
+        text = fc.get("text", "")
+
+        if text not in seen_claims:
+            seen_claims.add(text)
+            unique_fact_checks.append(fc)
+
+    fact_checks = unique_fact_checks
+
+    seen = set()
+    unique_news = []
+
+    for article in related_news:
+        url = article.get("url")
+
+        if url not in seen:
+            seen.add(url)
+            unique_news.append(article)
+
+    related_news = unique_news
+    fact_checks, similarity_score = semantic_fact_check_match(
+        query,
+        fact_checks
+    )
+    if not fact_checks:
+        similarity_score = 0
+
+    has_fact_check = len(fact_checks) > 0
+    has_related_news = len(related_news) > 0
+
+    rating = ""
+
+    if has_fact_check:
+
+        review_data = fact_checks[0].get("claimReview")
+
+        if review_data:
+
+            rating = review_data[0].get(
+                "textualRating",
+                ""
+            ).lower()
+
+    fact_check_disputed = any(
+        word in rating
+        for word in [
+            "false",
+            "fake",
+            "incorrect",
+            "misleading",
+            "wrong",
+            "falso",
+            "falsch",
+            "errado"
+        ]
+    )
+
+    trust_score = 0
+
+    trust_score += int(confidence * 50)
+
+    if has_related_news:
+        trust_score += 20
+
+    if has_fact_check:
+
+        if fact_check_disputed:
+            trust_score -= 30
+        else:
+            trust_score += 30
+
+    trust_score = max(
+        0,
+        min(100, trust_score)
+    )
 
     st.session_state.history.append(
-        {
-            "Prediction": prediction_text,
-            "Confidence": confidence
-        }
-    )
+            {
+                "Prediction": prediction_text,
+                "Confidence": confidence
+            }
+        )
 
     if len(st.session_state.history) > 5:
-        st.session_state.history = (
-            st.session_state.history[-5:]
-        )
-
-    st.divider()
-
-    st.header("🎯 AI Verdict")
-
-    if prediction == 1:
-        verdict = "REAL NEWS"
-        emoji = "✅"
-        css = "real"
-    else:
-        verdict = "FAKE NEWS"
-        emoji = "❌"
-        css = "fake"
-
-    st.markdown(
-        f"""
-<div class="verdict-card">
-
-<div class="verdict-title {css}">
-{emoji} {verdict}
-</div>
-
-<div class="verdict-confidence">
-{confidence:.2%}
-</div>
-
-<div class="verdict-small">
-Model Confidence
-</div>
-
-</div>
-""",
-        unsafe_allow_html=True
-    )
-
-    left, right = st.columns(2)
-
-    with left:
-
-        st.metric(
-            "Inference Time",
-            f"{inference_time:.2f} sec"
-        )
-
-        st.metric(
-            "Prediction",
-            prediction_text
-        )
-
-        if confidence > 0.95:
-            st.success("🟢 Very High Confidence")
-
-        elif confidence > 0.80:
-            st.info("🔵 High Confidence")
-
-        elif confidence > 0.60:
-            st.warning("🟡 Moderate Confidence")
-
-        else:
-            st.error("🔴 Low Confidence")
-
-    with right:
-
-        gauge = go.Figure(
-            go.Indicator(
-                mode="gauge+number",
-                value=confidence*100,
-                number={"suffix":"%"},
-                gauge={
-                    "axis":{"range":[0,100]},
-                    "bar":{"color":"#2563EB"},
-                    "steps":[
-                        {
-                            "range":[0,50],
-                            "color":"#EF4444"
-                        },
-                        {
-                            "range":[50,75],
-                            "color":"#FACC15"
-                        },
-                        {
-                            "range":[75,100],
-                            "color":"#22C55E"
-                        }
-                    ]
-                }
+            st.session_state.history = (
+                st.session_state.history[-5:]
             )
-        )
+    st.header("🛡️ News Credibility Assessment")
 
-        gauge.update_layout(
-            height=280,
-            margin=dict(
-                l=20,
-                r=20,
-                t=20,
-                b=20
-            ),
-            paper_bgcolor="rgba(0,0,0,0)"
-        )
-
-        st.plotly_chart(
-            gauge,
-            use_container_width=True
-        )
+    show_prediction(
+        prediction,
+        confidence
+    )
 
     st.divider()
-
-    st.subheader("📊 Prediction Probabilities")
-
-    p1, p2 = st.columns(2)
-
-    with p1:
-
-        st.write(
-            f"🟥 **Fake Probability:** {fake_probability:.2%}"
-        )
-
-        st.progress(fake_probability)
-
-        st.write(
-            f"🟩 **Real Probability:** {real_probability:.2%}"
-        )
-
-        st.progress(real_probability)
-        with p2:
-
-            pie = go.Figure(
-                data=[
-                    go.Pie(
-                        labels=["Fake", "Real"],
-                        values=[
-                        fake_probability,
-                        real_probability
-                    ],
-                        hole=0.65,
-                        marker=dict(
-                        colors=[
-                            "#EF4444",
-                            "#22C55E"
-                        ]
-                    )
-                )
-            ]
-        )
-
-        pie.update_layout(
-            showlegend=True,
-            height=360,
-            margin=dict(
-                l=10,
-                r=10,
-                t=30,
-                b=10
-            ),
-            paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="rgba(0,0,0,0)"
-        )
-
-        st.plotly_chart(
-            pie,
-            use_container_width=True
-        )
+    show_dashboard(
+        prediction_text,
+        confidence,
+        trust_score,
+        inference_time
+    )
 
     st.divider()
+    show_trust_score(
+        trust_score
+    )
 
-    st.subheader("🧠 AI Assessment")
+    st.divider()
+    show_reliability_breakdown(
+        confidence,
+        has_fact_check,
+        has_related_news,
+        fact_check_disputed,
+        trust_score
+    )
 
-    if prediction == 1:
+    st.divider()
+    show_authenticity_progress(
+        trust_score
+    )
 
-        if confidence > 0.95:
+    st.divider()
+    show_confidence_meter(confidence)
 
-            st.success("""
-The writing style strongly resembles authentic news reporting.
+    st.divider()
+    show_probability_chart(
+        fake_probability,
+        real_probability
+    )
+    st.divider()
 
-The model is highly confident in this prediction.
+    if fact_checks:
 
-This result is based on linguistic patterns learned during training.
-""")
+        review = fact_checks[0]["claimReview"][0]
 
-        elif confidence > 0.75:
-
-            st.info("""
-The article appears to resemble genuine news.
-
-Confidence is reasonably high, but manual verification is still recommended for important information.
-""")
-
-        else:
-
-            st.warning("""
-The article resembles real news, but confidence is moderate.
-
-Consider verifying this information using trusted news sources.
-""")
+        show_fact_check(
+            review,
+            fact_checks[0].get(
+                "text",
+                "No claim text available"
+            ),
+            similarity_score   
+        )
 
     else:
 
-        if confidence > 0.95:
+        st.subheader("🔍 Fact Check Status")
 
-            st.error("""
-The writing style strongly resembles fake or misleading news.
+        st.warning(
+            "⚠ No matching professional fact-check found."
+        )
 
-The model is highly confident in this prediction.
+    st.divider()
+    show_search_summary(
+        related_news,
+        fact_checks,
+    )
 
-Always verify suspicious news using reliable sources.
-""")
+    st.divider()
+    show_related_news(
+        related_news
+    )
 
-        elif confidence > 0.75:
+    st.divider()
+    show_authenticity_indicators(
+        confidence,
+        related_news,
+        fact_check_disputed
+    )
 
-            st.warning("""
-The article contains several characteristics commonly found in misleading news.
+    st.divider()
+    show_overall_reliability(
+        prediction,
+        confidence,
+        has_fact_check,
+        has_related_news,
+        fact_check_disputed
+    )
 
-Manual verification is recommended.
-""")
+    st.divider()
+    show_recommendation(
+        prediction,
+        confidence,
+        fact_check_disputed
+    )
 
-        else:
+    st.divider()
+    show_ai_reasoning(
+        prediction,
+        confidence,
+        fact_check_disputed,
+        has_related_news
+    )
 
-            st.info("""
-The article contains mixed linguistic signals.
-
-The prediction confidence is moderate.
-Please verify the information before drawing conclusions.
-""")
+    st.divider()
+    show_model_information()
 
     st.divider()
 
-    st.markdown("## 📊 Model Information")
-
-    c1, c2, c3, c4 = st.columns(4)
-
-    c1.metric(
-        "Model",
-        "DistilBERT"
+    pdf_file = generate_pdf_report(
+        prediction_text,
+        confidence,
+        trust_score,
+        has_fact_check,
+        has_related_news,
+        fact_check_disputed,
     )
 
-    c2.metric(
-        "Accuracy",
-        "99.8%"
-    )
+    with open(pdf_file, "rb") as file:
 
-    c3.metric(
-        "Dataset",
-        "31K+"
-    )
+        st.download_button(
+            "📄 Download AI Report",
+            file,
+            file_name="AI_Fake_News_Report.pdf",
+            mime="application/pdf",
+            use_container_width=True,
+        )
 
-    c4.metric(
-        "Framework",
-        "PyTorch"
-    )
+    st.divider()
 
-    left_exp, right_exp = st.columns(2)
+    st.caption(
+"""
+© 2026 Kushagra Bhatnagar
 
-    with left_exp:
-
-        with st.expander("📖 About the Model"):
-
-            st.write("""
-This application uses a fine-tuned DistilBERT Transformer trained on more than **31,000** news articles.
-
-Instead of relying on keywords, DistilBERT understands the context and relationships between words before making a prediction.
-
-The model classifies news articles based on writing patterns and **does not perform real-time internet fact checking**.
-""")
-
-    with right_exp:
-
-        with st.expander("💡 Try Sample Articles"):
-
-            st.markdown("### 📰 Real Example")
-
-            st.code("""
-Prime Minister Narendra Modi inaugurated a new expressway today aimed at improving transport connectivity.
-""")
-
-            st.markdown("### ❌ Fake Example")
-
-            st.code("""
-Scientists confirm that aliens have officially taken over the White House.
-""")
-            st.divider()
-
-            st.caption(
-    "© 2026 Kushagra Bhatnagar | DistilBERT • Hugging Face • PyTorch • Streamlit"
+AI-Powered Fake News Detection using DistilBERT,
+Google Fact Check API,
+NewsAPI,
+PyTorch,
+and Streamlit.
+"""
 )
