@@ -15,11 +15,6 @@ from transformers import (
     AutoModelForSequenceClassification,
 )
 
-from utils import (
-    get_related_news,
-    get_fact_checks,
-    semantic_fact_check_match,
-)
 
 from Components import(
     show_prediction,
@@ -247,11 +242,14 @@ with b1:
         "🚀 Analyze Article",
         use_container_width=True
     )
+def clear_news():
+    st.session_state.news_input = ""
 
 with b2:
     if st.button(
         "🗑️",
-        use_container_width=True
+        use_container_width=True,
+        on_click = clear_news
     ):
         st.session_state.news_input = ""
         st.rerun()
