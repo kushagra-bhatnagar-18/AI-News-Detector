@@ -4,7 +4,7 @@ from sentence_transformers.util import cos_sim
 import spacy
 import streamlit as st
 import os
-from dotenv import load_dotenv()
+from dotenv import load_dotenv
 
 nlp = spacy.load("en_core_web_sm")
 semantic_model = SentenceTransformer(
